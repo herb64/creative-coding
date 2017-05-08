@@ -1,6 +1,9 @@
-/*
+/* 
  * Creative Coding
  * Week 2, 04 - The Clocks!
+ *
+ * Modfied by Herbert Mehlhose during course lecture.
+ *
  * by Indae Hwang and Jon McCormack
  * Updated 2016
  * Copyright (c) 2014-2016 Monash University
@@ -54,9 +57,15 @@ void draw() {
 
       float tx = margin + cellsize/2  + (cellsize + gutter) * j;
       float ty = margin + cellsize/2  + (cellsize + gutter) * i;
-
-      movingCircle(tx, ty, cellsize, circleNumber * TWO_PI * millis() / 60000.0);
+      if((i+j)%2 == 0) {
+        movingCircle(tx, ty, cellsize, circleNumber * TWO_PI * millis() / 60000.0);
+      } else {
+        movingCircle2(tx, ty, cellsize, circleNumber * TWO_PI * millis() / 60000.0);
+      }
     }
+  }
+  if (keyPressed == true && key=='s') {
+    saveFrame("movingcircle.jpg");
   }
 }//end of draw 
 
@@ -71,6 +80,21 @@ void movingCircle(float x, float y, float size, float angle) {
   strokeWeight(1);
   fill(140, 180);
   ellipse(x, y, size, size); // circle
+
+  stroke(255, 0, 0);
+  line(x, y, endpointX, endpointY); // red line
+}
+
+void movingCircle2(float x, float y, float size, float angle) {
+
+  // calculate endpoint of the line
+  float endpointX = x + (size / 2) * cos(angle);
+  float endpointY = y - (size / 2) * sin(angle);
+
+  stroke(0);
+  strokeWeight(1);
+  fill(140, 180);
+  rect(x, y, size, size); // circle
 
   stroke(255, 0, 0);
   line(x, y, endpointX, endpointY); // red line
