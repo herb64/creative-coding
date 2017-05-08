@@ -1,14 +1,34 @@
 
 float angle;
 float jitter;
+quad[] q;
 
 void setup() {
+  // setup some stuff
+  q = new quad[2];
+  q[0] = new quad();
+  q[1] = new quad();
+  //q[0].infos();
+  //q[1].infos();
   size(640, 360);
   noStroke();
   fill(255);
   rectMode(CENTER);
   // we only want to draw this once
   noLoop();
+}
+
+class quad {
+  int size;
+  float hgt;
+  quad(){
+    size = int(random(5, 12));
+    hgt = random(0.0, 0.5);
+    
+  }
+  void infos(){
+    print("size: " + size + ", hgt: " + hgt + "\n");
+  }
 }
 
 void draw() {
@@ -35,4 +55,6 @@ void draw() {
   print(a[0] + "\n");
   float[] e = sort(a);
   print(e[0]);
+  q[0].infos();
+  q[1].infos();
 }
