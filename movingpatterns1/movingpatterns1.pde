@@ -25,7 +25,8 @@
  * 
  */
 
-int frameRateValue; // variable used to store the current frame rate value
+// set initial value for global variable here - most values in one place
+int frameRateValue = 6; // variable used to store the current frame rate value
 int gridSize = 20; // number of circles in each column and row
 int margin = 0; // margin in each circle cell
 float gutter = 0; //distance between each cell
@@ -34,7 +35,7 @@ float cellsize; // declaring the variable here lets us access it in other functi
 void setup() {
   size(500, 500);
 
-  frameRateValue = 6;
+  //frameRateValue = 6; // now set at global definition
   frameRate(frameRateValue);
   rectMode(CENTER);
   background(255);
@@ -52,12 +53,13 @@ void draw() {
 
       float centerpointX = margin + cellsize * i + gutter * i;
       float centerpointY = margin + cellsize * j + gutter * j;
-      movingCircle(centerpointX, centerpointY, cellsize, circleNumber);
+      int col = (i*j);
+      movingCircle(centerpointX, centerpointY, cellsize, circleNumber, col);
     }
   }
 }
 
-void movingCircle(float centerpointX, float centerpointY, float size, int circleNum) {
+void movingCircle(float centerpointX, float centerpointY, float size, int circleNum, int col) {
 
   float finalAngle;
   finalAngle = frameCount + circleNum;
@@ -67,11 +69,11 @@ void movingCircle(float centerpointX, float centerpointY, float size, int circle
   float endpointY = centerpointY + (size / 2) * cos(PI / frameRateValue * finalAngle);
 
   noStroke();
-  fill(0);
+  fill(col,0,0);
   rect(endpointX, endpointY, size/5, size/5);
   rect(endpointX, endpointY, 1, size*5);
   noFill();
-  stroke(0);
+  stroke(0,0,0);
   line(centerpointX, centerpointY, endpointX, endpointY);
 }
 
@@ -94,5 +96,6 @@ void keyReleased() {
 
   // set the frameRate and print current value on the screen
   frameRate(frameRateValue);
-  println("Current frame Rate is: " + frameRateValue);
+  // adding builtin variable frameCount to our output..
+  println("Frame " + frameCount + ": Current frame Rate is: " + frameRateValue);
 }
