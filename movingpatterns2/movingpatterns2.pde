@@ -88,6 +88,10 @@ void keyReleased() {
   if ( keyCode == LEFT && frameRateValue > 2) {
     frameRateValue--;
   }
+  
+  if ( key == 's') {
+    saveFrame("movingpatterns2.jpg");
+  }
 
   // print the current value on the screen
   println("Current frame Rate is: " + frameRateValue);
