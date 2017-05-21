@@ -33,9 +33,9 @@ float gutter = 0; //distance between each cell
 float cellsize; // declaring the variable here lets us access it in other functions in our program
 
 void setup() {
-  size(500, 500);
+  size(800, 800);
 
-  //frameRateValue = 6; // now set at global definition
+  //frameRateValue = 6; // now set at global definitionc
   frameRate(frameRateValue);
   rectMode(CENTER);
   background(255);
@@ -63,14 +63,17 @@ void movingCircle(float centerpointX, float centerpointY, float size, int circle
 
   float finalAngle;
   finalAngle = frameCount + circleNum;
+  float ccolor = finalAngle * 20  % 255;
+  
 
   //the angle of rotation for each hand is affected by the frameRate and angle;  
   float endpointX = centerpointX + (size / 2) * sin(PI / frameRateValue * finalAngle);
   float endpointY = centerpointY + (size / 2) * cos(PI / frameRateValue * finalAngle);
 
   noStroke();
-  fill(col,0,0);
-  rect(endpointX, endpointY, size/5, size/5);
+  fill(ccolor,0,255-ccolor);
+  ellipse(endpointX, endpointY, size/2, size/3);
+  //rect(endpointX, endpointY, size/5, size/5);
   rect(endpointX, endpointY, 1, size*5);
   noFill();
   stroke(0,0,0);
@@ -92,6 +95,11 @@ void keyReleased() {
   // left arrow -- decrease frameRateValue
   if ( keyCode == LEFT && frameRateValue > 1) {
     frameRateValue--;
+  }
+  
+  if ( key == 's') {
+  //if (keyPressed == true && key=='s') {
+    saveFrame("movingpatterns1.jpg");
   }
 
   // set the frameRate and print current value on the screen
