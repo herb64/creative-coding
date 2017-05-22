@@ -35,7 +35,7 @@ void setup() {
   // make the display window the full size of the screen
   size(displayWidth, displayHeight);
 
-  frameRateValue = 12;
+  frameRateValue = 2;
   rectMode(CENTER);
   background(0);
   cellsize = ( width - (2 * margin) - gutter * (gridSize - 1) ) / (gridSize - 1); //define cellsize
@@ -95,4 +95,10 @@ void keyReleased() {
 
   // print the current value on the screen
   println("Current frame Rate is: " + frameRateValue);
+}
+
+void mouseDragged() {
+  float frv = map(mouseX, 0, displayWidth, 2, 120);
+  frameRateValue = (int)frv; 
+  println("MouseX: " + mouseX + ", current frame Rate is: " + frameRateValue);
 }
