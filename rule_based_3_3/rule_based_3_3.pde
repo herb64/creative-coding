@@ -43,15 +43,11 @@ float blue;
 void setup() {
 
   //Fullscreen: to make fullscreen run this sketch with presentation mode ( sketch menu > Present )
-  size(displayWidth, displayHeight);
-
-  //Not fullscreen: fixed window 
-  // size(500, 500);
-
+  size(1200, 800);
 
   // change each value below for different visual
-  num = 5;
-  distanceMargin = 20;
+  num = 15;
+  distanceMargin = 50;
 
   rowHeight = height/(num-1); // height of each row
 
@@ -101,9 +97,11 @@ void draw() {
         stroke(0, 20);
         line(x[i], y[i], x[i+1], y[i+1]);
 
-        // stroke(255);
-        point(x[i], y[i]);
-        point(x[i+1], y[i+1]);
+        //stroke(255);
+        //point(x[i], y[i]);
+        //point(x[i+1], y[i+1]);
+        //ellipse(x[i], y[i],5,5);
+        //ellipse(x[i+1], y[i+1], 7 ,7);
       }
     }
   }
