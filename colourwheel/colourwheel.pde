@@ -26,6 +26,24 @@
  * 
  */
 
+/* Code changes by Herbert Mehlhose, 05/2017
+ * 
+ * 1. Make it a real circle. Using arc() for this. Original color wheel
+ *    code moved into wheelOrig() function. New function wheelHerb() implements
+ *    the "real wheel"... You can use key "w" to toggle between both...
+ * 2. Key "s" allows to save your image to "colourwheel1.jpg"
+ * 3. wheelSegments can be set in the variables below... 10 was the default, using
+ *    20 now
+ * 
+ * There is still a mirror around the positive 45degrees axis comparing the original
+ * with my implementation..
+ *
+ */
+
+// Some new variables for state information with my code
+boolean useHerbWheel = false;  // by default, use original one
+int wheelSegments = 20;        // change this as you like
+
 // colourHandle: the user interface element to changing colours over the wheel
 // It has a postion and a size
 //
@@ -71,20 +89,11 @@ void draw() {
 
   //draw itten's color wheel - we'll use a QUAD_STRIP for this
   noStroke();
-  beginShape(QUAD_STRIP);
-  for (int i=0; i<=10; i++) {
-    float angle = radians(36*i-90); // 10 x 36 degree steps
-
-    //   Hue   Sat  Brightness
-    fill(36*i, 100, 100);  // change the colour as we're building the quads
-
-    //outside(top)
-    vertex( width/2 + outerR*sin(angle), height/2 + outerR*cos(angle) );
-    //inside(down)
-    vertex( width/2 + innerR*sin(angle), height/2 + innerR*cos(angle) );
+  if(useHerbWheel) {
+    wheelHerb();
+  } else {
+    wheelOrig();
   }
-  endShape(CLOSE);
-
 
   // colour handle Position Update
   colorHandleUpdate();
@@ -192,6 +201,46 @@ void dotLine(float x1, float y1, float x2, float y2, int dotDetail) {
 }
 
 /*
+ * wheelOrig()
+ * draw the original colorwheel - this has been moved from draw() into a
+ * separate function to make it switchable (use key "w")
+ */
+void wheelOrig() {
+  beginShape(QUAD_STRIP);
+  for (int i=0; i<=10; i++) {
+    float angle = radians(36*i-90); // 10 x 36 degree steps
+
+    //   Hue   Sat  Brightness 
+    fill(36*i, 100, 100);  // change the colour as we're building the quads
+
+    //outside(top)
+    vertex( width/2 + outerR*sin(angle), height/2 + outerR*cos(angle) );
+    //inside(down)
+    vertex( width/2 + innerR*sin(angle), height/2 + innerR*cos(angle) );
+  }
+endShape(CLOSE);
+}
+
+/*
+ * wheelHerb()
+ * draw a wheel as circle instad of quad strips
+ * as mentioned in the processing reference, the arc() function might be inaccurate...
+ */
+void wheelHerb() {
+  float ang = 0.0;
+  for (int i=0; i<=wheelSegments; i++) {
+    float angle = radians((360/wheelSegments)*i+90)-PI/wheelSegments; // 10 x 36 degree steps
+    fill((360/wheelSegments)*i, 100, 100);
+    arc(400.0, 400.0, outerR*2, outerR*2, ang, angle);
+    ang = angle;  
+  }
+  noStroke();
+  // here, we just fill the inner area white to get a ring instead of a piechart
+  fill(0,0,100);
+  ellipse(400,400,outerR,outerR);
+}
+
+/*
  * mousePressed
  * When mouse button is first pressed, check if the user has pressed over the colour handle
  * If so, set isLocked to true to lock manipulation of the handle
@@ -210,4 +259,17 @@ void mousePressed() {
  */
 void mouseReleased() {
   isLocked = false;
+}
+
+/*
+ * keyReleased function
+ */
+void keyReleased() {
+  if ( key == 'w') {
+    useHerbWheel = !useHerbWheel;
+  }
+
+  if ( key == 's') {
+    saveFrame("colorwheel1.jpg");
+  }
 }
