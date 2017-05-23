@@ -43,6 +43,7 @@
 // Some new variables for state information with my code
 boolean useHerbWheel = false;  // by default, use original one
 int wheelSegments = 20;        // change this as you like
+int standardSegments = 10;
 
 // colourHandle: the user interface element to changing colours over the wheel
 // It has a postion and a size
@@ -73,7 +74,7 @@ void setup() {
   size(800, 800);
   colorMode(HSB, 360, 100, 100); // use HSB colour mode, H=0->360, S=0->100, B=0->100
 
-    colorHandleX = width/2+300;
+  colorHandleX = width/2+300;
   colorHandleY = height/2;
 }
 
@@ -207,11 +208,11 @@ void dotLine(float x1, float y1, float x2, float y2, int dotDetail) {
  */
 void wheelOrig() {
   beginShape(QUAD_STRIP);
-  for (int i=0; i<=10; i++) {
-    float angle = radians(36*i-90); // 10 x 36 degree steps
+  for (int i=0; i<=standardSegments; i++) {
+    float angle = radians(360/standardSegments*i-90); // 10 x 36 degree steps
 
     //   Hue   Sat  Brightness 
-    fill(36*i, 100, 100);  // change the colour as we're building the quads
+    fill(360/standardSegments*i, 100, 100);  // change the colour as we're building the quads
 
     //outside(top)
     vertex( width/2 + outerR*sin(angle), height/2 + outerR*cos(angle) );
@@ -225,12 +226,19 @@ endShape(CLOSE);
  * wheelHerb()
  * draw a wheel as circle instad of quad strips
  * as mentioned in the processing reference, the arc() function might be inaccurate...
+ * Note: it is important to use float numbers in calculations, otherwise larger
+ * number of segments will not get drawn (rounding errors)
  */
 void wheelHerb() {
   float ang = 0.0;
-  for (int i=0; i<=wheelSegments; i++) {
-    float angle = radians((360/wheelSegments)*i+90)-PI/wheelSegments; // 10 x 36 degree steps
-    fill((360/wheelSegments)*i, 100, 100);
+  for (int i=1; i<=wheelSegments; i++) {
+    float angle = radians((360.0/wheelSegments)*i);
+    // the correction of 198 works for 20 segments, needs adjustment
+    // for different values to avoid shifts...
+    // just kept that for now
+    float hue = (360.0/wheelSegments)*(wheelSegments-i)+198;
+    hue = hue > 360.0 ? hue - 360.0 : hue;
+    fill(hue, 100, 100);
     arc(400.0, 400.0, outerR*2, outerR*2, ang, angle);
     ang = angle;  
   }
