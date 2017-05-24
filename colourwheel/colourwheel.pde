@@ -42,8 +42,10 @@
 
 // Some new variables for state information with my code
 boolean useHerbWheel = true;   // by default, use the new one
-int wheelSegments = 20;        // change this as you like
-int standardSegments = 20;     // allows variable segments for original as well
+int wheelSegments = 12;        // change this as you like
+int standardSegments = 10;     // allows variable segments for original as well
+boolean helpShown = true;      // help is shown by default, toggle with 'h' key
+int nColorHistory = 7;         // number of color history entries in bar at left
 
 // colourHandle: the user interface element to changing colours over the wheel
 // It has a postion and a size
@@ -69,6 +71,9 @@ float hueValue = 180;
 float brightValue = 100;
 float complementryHue = 0;
 
+// our history bar as global object
+historybar bar;
+
 void setup() {
 
   size(800, 800);
@@ -77,6 +82,12 @@ void setup() {
   colorHandleX = width/2+300;
   colorHandleY = height/2;
   background(0,0,0);
+  
+  // create our colour history bar object with a given width and height
+  bar = new historybar(120,700,nColorHistory);
+  
+  // text size for help
+  textSize(16);
 }
 
 
@@ -101,8 +112,12 @@ void draw() {
     wheelOrig();
   }
 
-  // colour handle Position Update
+  // colour handle Position Update - draw this BEFORE the
+  // colour bar gets drawn, so that it remains visible.
   colorHandleUpdate();
+
+  // display the history
+  bar.draw();
 
   //draw dotted line from center to colorhandle
   dotLine(width/2, height/2, colorHandleX, colorHandleY, 40); 
@@ -127,10 +142,12 @@ void draw() {
 
   complementryHue = calculateCompHue(hueValue);
 
-  //println("hueValue: "+hueValue + " + "+"comhue: "+complementryHue);
-
   fill( complementryHue, 100, brightValue );
   ellipse(comHandX, comHandY, 40, 40);
+  
+  if(helpShown) {
+    displayHelp();
+  }
 }
 
 /*
@@ -266,9 +283,10 @@ void mousePressed() {
  *
  */
 void mouseReleased() {
+  if(isLocked) {
+    bar.update(color(hueValue, 100, brightValue), color(complementryHue, 100, brightValue));
+  }
   isLocked = false;
-  fill(0,100,100);
-  ellipse(100,100,20,20);
 }
 
 /*
@@ -282,4 +300,85 @@ void keyReleased() {
   if ( key == 's') {
     saveFrame("colorwheel1.jpg");
   }
+  
+  if ( key == 'c') {
+    bar.toggle();
+  }
+
+  if ( key == 'h') {
+    helpShown = !helpShown;
+  }
+}
+
+/*
+ * Color history bar is contained in a separate class
+ */
+ 
+public class historybar{
+  private boolean isVisible = true;          // we can toggle visibility using 'c' key
+  private int xpos, ypos, xsize, ysize;      // size and position of the history bar
+  private int numc;                          // keep last numc colour pairs by default
+  private color[] MainColor, CompColor;      // Color arrays
+  private int size;                          // size of each circle
+  
+  // constructor
+  public historybar(int w, int h, int n) {
+    xpos = 40;                               // fixed x position
+    ypos = (height-h)/2;                     // centered in y
+    xsize = w;
+    ysize = h;
+    numc = n;
+    size = h / numc - 10;
+    if (size > (xsize - 10)) {
+      size = xsize - 10;
+    }
+    MainColor = new color[numc];
+    CompColor = new color[numc];
+    for (int i = 0; i < numc; i++) {
+      MainColor[i] = color(0,1,10);
+      CompColor[i] = color(0,1,5);
+    }
+  }
+  
+  // show() - just show the current contents
+  public void draw() {
+    if (isVisible) {
+      noStroke();
+      for (int i = 0; i<numc; i++) {
+        // get center first
+        int centerx = xpos + xsize/2;
+        int centery = ypos + ysize/(2*numc) + i*ysize/numc;
+        fill(MainColor[i]);
+        ellipse(centerx, centery, size, size);
+        fill(CompColor[i]);
+        ellipse(centerx, centery, size/2, size/2);
+      }
+    }
+  }
+  
+  // update() - add a new color pair. We always add to the top
+  // and move down the remaining ones
+  public void update(color M, color C) {
+    for (int i = numc-1; i>0; i--) {
+      MainColor[i] = MainColor[i-1];
+      CompColor[i] = CompColor[i-1];
+    }
+    MainColor[0] = M;
+    CompColor[0] = C;
+  }
+  
+  // toggle() - visibility toggle, key 'c'
+  public void toggle() {
+    isVisible = !isVisible;
+  }
+  
+}
+
+void displayHelp() {
+  String s = "'h' toogles this help text on/off";
+  s+="\n'w' toggles color wheel appearance";
+  s+="\n'c' toggles color bar at left";
+  s+="\n's' saves an image to colorwheel1.jpg'";
+  fill(130);
+  text(s, 300, 650, 500, 140);  // Text wraps within text box
 }
