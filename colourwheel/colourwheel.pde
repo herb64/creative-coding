@@ -41,9 +41,9 @@
  */
 
 // Some new variables for state information with my code
-boolean useHerbWheel = false;  // by default, use original one
+boolean useHerbWheel = true;   // by default, use the new one
 int wheelSegments = 20;        // change this as you like
-int standardSegments = 10;
+int standardSegments = 20;     // allows variable segments for original as well
 
 // colourHandle: the user interface element to changing colours over the wheel
 // It has a postion and a size
@@ -76,14 +76,19 @@ void setup() {
 
   colorHandleX = width/2+300;
   colorHandleY = height/2;
+  background(0,0,0);
 }
 
 
 void draw() {
   //Since were using HSB colour mode this clears the display window to white
   //         H  S  B
-  background(0, 0, 100);
-
+  background(0, 0, 0);
+  // Playing with blend...
+  //blendMode(BLEND); // actually, this is default mode, see ref
+  //fill(0, 50);
+  //rect(0, 0, width/2, height/2);
+  
   // draw reference line at the 0/360 hue boundary
   stroke(0, 40);
   line(width/2 - innerR, height/2, width/2 - outerR2, height/2);
@@ -209,11 +214,10 @@ void dotLine(float x1, float y1, float x2, float y2, int dotDetail) {
 void wheelOrig() {
   beginShape(QUAD_STRIP);
   for (int i=0; i<=standardSegments; i++) {
-    float angle = radians(360/standardSegments*i-90); // 10 x 36 degree steps
+    float angle = radians(360.0/standardSegments*i-90.0); // 10 x 36 degree steps
 
     //   Hue   Sat  Brightness 
-    fill(360/standardSegments*i, 100, 100);  // change the colour as we're building the quads
-
+    fill(360.0/standardSegments*i, 100, 100);  // change the colour as we're building the quads
     //outside(top)
     vertex( width/2 + outerR*sin(angle), height/2 + outerR*cos(angle) );
     //inside(down)
@@ -226,25 +230,21 @@ endShape(CLOSE);
  * wheelHerb()
  * draw a wheel as circle instad of quad strips
  * as mentioned in the processing reference, the arc() function might be inaccurate...
- * Note: it is important to use float numbers in calculations, otherwise larger
+ * Note: it is important to use float numbers (xx.x) in calculations, otherwise larger
  * number of segments will not get drawn (rounding errors)
  */
 void wheelHerb() {
   float ang = 0.0;
   for (int i=1; i<=wheelSegments; i++) {
     float angle = radians((360.0/wheelSegments)*i);
-    // the correction of 198 works for 20 segments, needs adjustment
-    // for different values to avoid shifts...
-    // just kept that for now
-    float hue = (360.0/wheelSegments)*(wheelSegments-i)+198;
-    hue = hue > 360.0 ? hue - 360.0 : hue;
-    fill(hue, 100, 100);
+    float hue = 180.0 - (i-1) * 360.0/wheelSegments;
+    fill(hue < 0 ? hue + 360.0 : hue, 100, 100);
     arc(400.0, 400.0, outerR*2, outerR*2, ang, angle);
     ang = angle;  
   }
   noStroke();
-  // here, we just fill the inner area white to get a ring instead of a piechart
-  fill(0,0,100);
+  // here, we just fill the inner area to get a ring instead of a "piechart"
+  fill(0,0,0);
   ellipse(400,400,outerR,outerR);
 }
 
@@ -267,6 +267,8 @@ void mousePressed() {
  */
 void mouseReleased() {
   isLocked = false;
+  fill(0,100,100);
+  ellipse(100,100,20,20);
 }
 
 /*
