@@ -30,3 +30,7 @@ are prepared for this... see next release
 
 The mirror problem with colours has now really been solved. You can select the number of segments now
 for the modified as well as the original wheel.
+
+There's obviously a but with the online version running my sketch on [openprocessing](https://www.openprocessing.org/sketch/429868).
+The saturation control using the mouse wheel does not work there, while it works perfectly if running 
+on a local machine.
