@@ -16,11 +16,15 @@ to implement the color bar at the left. You can cnange quite some parameters
 
 A help text is shown by default.
 
+### Controlling saturation
+
+This is now implemented by using the mouse wheel while having the color handle in use with
+left mouse key pressed.
+
 ## TODOs
 
-Getting the saturation thing done...
-
-Also, the colorbar could get some nice animation, showing the falling elements...
+Also, the colorbar could get some nice animation, showing the falling elements... First steps
+are prepared for this... see next release
 
 ## bugs and fixes
 

@@ -34,6 +34,7 @@
  * 2. Key "s" allows to save your image to "colourwheel1.jpg"
  * 3. wheelSegments can be set in the variables below... 10 was the default, using
  *    20 now
+ * 4. Mousewheel control saturation
  * 
  * There is still a mirror around the positive 45degrees axis comparing the original
  * with my implementation..
@@ -46,6 +47,7 @@ int wheelSegments = 12;        // change this as you like
 int standardSegments = 10;     // allows variable segments for original as well
 boolean helpShown = true;      // help is shown by default, toggle with 'h' key
 int nColorHistory = 7;         // number of color history entries in bar at left
+int imageIndex = 1;            // index to save images
 
 // colourHandle: the user interface element to changing colours over the wheel
 // It has a postion and a size
@@ -70,6 +72,8 @@ float outerR2 = outerR * 1.5; // limit of the handle's "pull" range
 float hueValue = 180;
 float brightValue = 100;
 float complementryHue = 0;
+// and adding saturation as variable to be changed as well
+float satValue = 100;
 
 // our history bar as global object
 historybar bar;
@@ -128,7 +132,7 @@ void draw() {
   ellipse(width/2, height/2, 10, 10);
 
   //   Hue       Sat  Brightness
-  fill(hueValue, 100, brightValue);
+  fill(hueValue, satValue, brightValue);
   ellipse(colorHandleX, colorHandleY, handleSize, handleSize );
 
   //complementry color for colorHandle (comHand)
@@ -142,7 +146,7 @@ void draw() {
 
   complementryHue = calculateCompHue(hueValue);
 
-  fill( complementryHue, 100, brightValue );
+  fill( complementryHue, satValue, brightValue );
   ellipse(comHandX, comHandY, 40, 40);
   
   if(helpShown) {
@@ -284,9 +288,23 @@ void mousePressed() {
  */
 void mouseReleased() {
   if(isLocked) {
-    bar.update(color(hueValue, 100, brightValue), color(complementryHue, 100, brightValue));
+    bar.update(color(hueValue, satValue, brightValue), 
+               color(complementryHue, satValue, brightValue));
   }
   isLocked = false;
+}
+
+/*
+ * mouseWheel
+ * Adjustment of the color saturation value
+ *
+ */
+void mouseWheel(MouseEvent event) {
+  if(isLocked) {
+    float e = event.getCount();
+    satValue = constrain(satValue + 5*e, 0, 100);
+    println("Mouse wheel " + e + ", satValue " + satValue);
+  }
 }
 
 /*
@@ -298,7 +316,8 @@ void keyReleased() {
   }
 
   if ( key == 's') {
-    saveFrame("colorwheel1.jpg");
+    String filename="colorwheel" + imageIndex++ + ".jpg";
+    saveFrame(filename);
   }
   
   if ( key == 'c') {
@@ -316,6 +335,8 @@ void keyReleased() {
  
 public class historybar{
   private boolean isVisible = true;          // we can toggle visibility using 'c' key
+  private boolean isAnimated = false;        // we can toggle animation using 'a' key
+  private boolean isUpdating = false;        // flag used for animation
   private int xpos, ypos, xsize, ysize;      // size and position of the history bar
   private int numc;                          // keep last numc colour pairs by default
   private color[] MainColor, CompColor;      // Color arrays
@@ -334,8 +355,9 @@ public class historybar{
     }
     MainColor = new color[numc];
     CompColor = new color[numc];
+    // initialize to some dark grey
     for (int i = 0; i < numc; i++) {
-      MainColor[i] = color(0,1,10);
+      MainColor[i] = color(0,1,8);
       CompColor[i] = color(0,1,5);
     }
   }
@@ -344,14 +366,18 @@ public class historybar{
   public void draw() {
     if (isVisible) {
       noStroke();
-      for (int i = 0; i<numc; i++) {
-        // get center first
-        int centerx = xpos + xsize/2;
-        int centery = ypos + ysize/(2*numc) + i*ysize/numc;
-        fill(MainColor[i]);
-        ellipse(centerx, centery, size, size);
-        fill(CompColor[i]);
-        ellipse(centerx, centery, size/2, size/2);
+      if(isAnimated) {
+        println("TODO animation");
+      } else {
+        for (int i = 0; i<numc; i++) {
+          // get center first
+          int centerx = xpos + xsize/2;
+          int centery = ypos + ysize/(2*numc) + i*ysize/numc;
+          fill(MainColor[i]);
+          ellipse(centerx, centery, size, size);
+          fill(CompColor[i]);
+          ellipse(centerx, centery, size/2, size/2);
+        }
       }
     }
   }
@@ -378,7 +404,9 @@ void displayHelp() {
   String s = "'h' toogles this help text on/off";
   s+="\n'w' toggles color wheel appearance";
   s+="\n'c' toggles color bar at left";
+  s+="\n'a' toggles color bar animation";
   s+="\n's' saves an image to colorwheel1.jpg'";
+  s+="\nUse mousewheel to change saturation while color handle is selected'";
   fill(130);
-  text(s, 300, 650, 500, 140);  // Text wraps within text box
+  text(s, 200, 630, 600, 160);  // Text wraps within text box
 }
