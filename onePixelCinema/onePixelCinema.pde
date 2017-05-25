@@ -37,6 +37,7 @@
  *    into the destination at same position. Maybe also change destination position slightly.
  *    - depending on the number of scanned pixels, start with larger circles, which get
  *      smaller with increasing samples. Thus, in the end, the original image might appear...
+ *    - use clip() to avoid overdraw between left and right half of window.
  * 3. Adding randomness
  *    - do some distortion by shifting to right by a value dependent on x or y position.
  *    - change the color within the reproduced image, e.g. invert hue or at least change
@@ -54,12 +55,17 @@
 // adjust these limits for window size, used by automatic scaling to given image
 int maxWidth = 1800;
 int maxHeight = 700;
-String imgfile = "venice2.JPG";
+String imgfile = "havanna2.JPG";
+int nScansPerFrame = 30;
+int maxDotSize = 40;
+int minDotSize = 20;
+boolean isSuspended = false;    // key 'p' can be used to pause
 
 PImage myImg;
 color[] pixelColors;
 int scanLine;  // vertical position
-int myWidth, myHeight;     // storing width and height after running getImage
+int myWidth, myHeight;          // storing width and height after running getImage
+int imageIndex = 1;             // index to save images
 
 
 void setup() {
@@ -67,7 +73,7 @@ void setup() {
   myImg = getImage(imgfile);
   myWidth = myImg.width;
   myHeight = myImg.height;
-  pixelColors = new color[10];
+  pixelColors = new color[nScansPerFrame];
   scanLine = 0;
   smooth(4);
 }
@@ -101,6 +107,7 @@ PImage getImage(String filename) {
     imgWidth *= wfactor;
     i.resize(imgWidth, imgHeight);
     println("Resizing by factor " + wfactor);
+    
   } else if (hfactor < wfactor) {
     imgHeight *= hfactor;
     imgWidth *= hfactor;
@@ -112,26 +119,41 @@ PImage getImage(String filename) {
 }
 
 void draw() {
-  background(0);
-  int t = myWidth / 10; // 35
+  //background(0);
+  if (isSuspended) {
+    return;
+  }
+  float dotSize = constrain(maxDotSize / (1+frameCount/150), minDotSize, maxDotSize);
+  int t = myWidth / nScansPerFrame; // 35
+  int[] x, y;
+  x = new int[nScansPerFrame];
+  y = new int[nScansPerFrame];
   
-  // read the colours for the current scanLine
-  for (int i=0; i<10; i++) {
-    //pixelColors[i] = myImg.get(17+i*35, scanLine);
-    pixelColors[i] = myImg.get(t/2+i*t, scanLine);
+  // Read color information from image using a certain amount of 
+  // sampling points.
+  for (int i=0; i<nScansPerFrame; i++) {
+    y[i] = scanLine;
+    x[i] = (int)random(0, myWidth);
+    y[i] = (int)random(0, myHeight);
+    pixelColors[i] = myImg.get(x[i], y[i]);
   }
 
-  // draw the sampled pixels as verticle bars
-  for (int i=0; i< 10; i++) {
+  // Redraw the sampled pixels on the left canvas.
+  for (int i=0; i< nScansPerFrame; i++) {
     noStroke();
+    clip(0, 0, myWidth, myHeight);
     fill(pixelColors[i]);
     //rect(i*35, 0, 35, 622);
-    rect(i*t, 0, t, myHeight);
+    //rect(i*t, 0, t, myHeight);
+    ellipse(x[i], y[i], dotSize, dotSize);
+    noClip();
   }
 
-  // draw the image
-  image(myImg, width/2, 0);
-
+  // draw the image just once
+  if(frameCount == 1) {
+    image(myImg, width/2, 0);
+  }
+  
   // increment scan line position every second frame
   if (frameCount % 2 == 0) {
     scanLine ++;
@@ -142,10 +164,38 @@ void draw() {
   }
 
   // draw circles over where the "scanner" is currently reading pixel values
-  for (int i=0; i<10; i++) {
-    stroke(255, 0, 0);
+  for (int i=0; i<nScansPerFrame; i++) {
+    clip(myWidth, 0, width, height);
+    //stroke(255, 0, 0);
     noFill();
-    //ellipse(width/2 + 17 + i*35, scanLine, 5, 5 );
-    ellipse(width/2 + t/2 + i*t, scanLine, 5, 5 );
+    //stroke(pixelColors[i]);
+    //ellipse(width/2 + t/2 + i*t, y[i], 5, 5 );
+    //ellipse(width/2 + x[i], y[i], maxDotSize-dotSize, 2*maxDotSize-dotSize);
+    stroke(0);
+    ellipse(width/2 + x[i], y[i], 23, 23);
+    //point(width/2 + x[i], y[i]);
+    noClip();
+  }
+}
+
+/*
+ * keyReleased function
+ */
+void keyReleased() {
+  if ( keyCode == UP) {
+    minDotSize += 5;
+  }
+  if ( keyCode == DOWN) {
+    minDotSize -= 5;
+  }
+  if (key == 'p') {
+    isSuspended = !isSuspended;
+    println("Suspended: " + isSuspended);
+  }
+  // save for now saves the whole frame only, we might
+  // have a save for left portion only
+  if ( key == 's') {
+    String filename="onePixelCam" + imageIndex++ + ".jpg";
+    saveFrame(filename);
   }
 }
