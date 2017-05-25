@@ -58,7 +58,7 @@ int maxWidth = 1800;
 int maxHeight = 700;
 String imgfile = "havanna2.JPG";
 int nScansPerFrame = 30;
-int maxDotSize = 40;
+int maxDotSize = 80;
 int minDotSize = 20;
 boolean isSuspended = false;    // key 'p' can be used to pause
 
@@ -67,7 +67,7 @@ color[] pixelColors;
 int scanLine;  // vertical position
 int myWidth, myHeight;          // storing width and height after running getImage
 int imageIndex = 1;             // index to save images
-
+int[] x, y;
 
 void setup() {
   // get image and adjust window automatically
@@ -75,6 +75,8 @@ void setup() {
   myWidth = myImg.width;
   myHeight = myImg.height;
   pixelColors = new color[nScansPerFrame];
+  x = new int[nScansPerFrame];
+  y = new int[nScansPerFrame];
   scanLine = 0;
   smooth(4);
 }
@@ -124,11 +126,8 @@ void draw() {
   if (isSuspended) {
     return;
   }
-  float dotSize = constrain(maxDotSize / (1+frameCount/150), minDotSize, maxDotSize);
-  int t = myWidth / nScansPerFrame; // 35
-  int[] x, y;
-  x = new int[nScansPerFrame];
-  y = new int[nScansPerFrame];
+  float dotSize = constrain((float)maxDotSize / (1.0 + (float)frameCount/150.0), minDotSize, maxDotSize);
+  //int t = myWidth / nScansPerFrame; // 35
   
   // Read color information from image using a certain amount of 
   // sampling points.
@@ -152,6 +151,7 @@ void draw() {
 
   // draw the image just once
   if(frameCount == 1) {
+    background(0);
     image(myImg, width/2, 0);
   }
   
@@ -185,13 +185,25 @@ void draw() {
 void keyReleased() {
   if ( keyCode == UP) {
     minDotSize += 5;
+    if (minDotSize >= maxDotSize) {
+      minDotSize = maxDotSize;
+      println("Upper size limit reached... (" + minDotSize + ")");
+    }
   }
   if ( keyCode == DOWN) {
     minDotSize -= 5;
+    if (minDotSize <= 0) {
+      minDotSize = 1;
+      println("Lower size limit reached... (1)");
+    }
   }
   if (key == 'p') {
     isSuspended = !isSuspended;
     println("Suspended: " + isSuspended);
+  }
+  if (key == 'r') {
+    frameCount = 0;
+    println("Restarting from beginning....");
   }
   // save for now saves the whole frame only, we might
   // have a save for left portion only
