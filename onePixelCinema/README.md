@@ -46,7 +46,7 @@ int minDotSize = 20;
 In addition I did pause the sketch, increased the ellipse size again, did run it a short time, paused again, decreased
 ellipses, run again short time and then pause again and save. This way, large bubbles and small bubbles appear as shown below.
 
-![text description](/havanna-test-1.jpg)
+![text description](havanna-test-1.jpg)
 
 ## TODOs
 
