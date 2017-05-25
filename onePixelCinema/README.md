@@ -87,9 +87,23 @@ ellipses, run again short time and then pause again and save. This way, large bu
 
 ![Running the sketch](havanna-test-1.jpg)
 
+### Some more examples
+
+Taj Mahal
+
+![Taj Mahal image](example-results/tajmahal-example1.JPG)
+
+Venice (right after reconstruction of right image started)
+
+![Venice image](example-results/venice1-after-beginning-reconstruction.JPG)
+
+Another one from Venice
+
+![Venice 2 image](example-results/venice2-example1.JPG)
+
 ## TODOs
 
-After loading ghe image in a more comfortable way, now the real stuff will begin...
+Fix the crash, if file is not found at loadImage(). Need to check first presence of file.
 
 ## bugs and fixes
 
@@ -109,3 +123,7 @@ It looks, like surface is not availabe in processing.js. Also the clip() functio
 
 So I proceeded for now to fix the code in [openprocessing](https://www.openprocessing.org/sketch/430564). This works 
 with the original image and code has been adjusted for fixed window size.
+
+### File not found crash
+
+If the image file is not found, it still crashes...  
