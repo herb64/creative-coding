@@ -11,6 +11,12 @@ Any photos, except melbourneCity.jpg and nasaImage.jpg which are provided as cou
 
 ## News
 
+### Rebuilding right image
+
+After a certain amount of frames has passed, so that the right image is almost completely black, a "rebuild"
+is started, now drawing circls in the original scan color. Adds some nice effects, just start and wait. A message
+is also written to the console, if that point is reached.
+
 ### About interaction
 
 You can use the following keys to interact.

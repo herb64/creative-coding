@@ -61,10 +61,10 @@ int nScansPerFrame = 30;
 int maxDotSize = 80;
 int minDotSize = 20;
 boolean isSuspended = false;    // key 'p' can be used to pause
+boolean bRebuild = false;       // rebuilding right side
 
 PImage myImg;
 color[] pixelColors;
-int scanLine;  // vertical position
 int myWidth, myHeight;          // storing width and height after running getImage
 int imageIndex = 1;             // index to save images
 int[] x, y;
@@ -77,7 +77,6 @@ void setup() {
   pixelColors = new color[nScansPerFrame];
   x = new int[nScansPerFrame];
   y = new int[nScansPerFrame];
-  scanLine = 0;
   smooth(4);
 }
 
@@ -132,7 +131,6 @@ void draw() {
   // Read color information from image using a certain amount of 
   // sampling points.
   for (int i=0; i<nScansPerFrame; i++) {
-    y[i] = scanLine;
     x[i] = (int)random(0, myWidth);
     y[i] = (int)random(0, myHeight);
     pixelColors[i] = myImg.get(x[i], y[i]);
@@ -155,15 +153,10 @@ void draw() {
     image(myImg, width/2, 0);
   }
   
-  // increment scan line position every second frame
-  if (frameCount % 2 == 0) {
-    scanLine ++;
+  if(!bRebuild && (frameCount > myWidth * myHeight / (20 * nScansPerFrame))) {
+    println("Framecount reached - rebuilding...");
+    bRebuild = true;
   }
-
-  if (scanLine > height) {
-    scanLine = 0;
-  }
-
   // draw circles over where the "scanner" is currently reading pixel values
   for (int i=0; i<nScansPerFrame; i++) {
     clip(myWidth, 0, width, height);
@@ -172,7 +165,11 @@ void draw() {
     //stroke(pixelColors[i]);
     //ellipse(width/2 + t/2 + i*t, y[i], 5, 5 );
     //ellipse(width/2 + x[i], y[i], maxDotSize-dotSize, 2*maxDotSize-dotSize);
-    stroke(0);
+    if(bRebuild) {
+      stroke(pixelColors[i]);
+    } else {
+      stroke(0);
+    }
     ellipse(width/2 + x[i], y[i], 23, 23);
     //point(width/2 + x[i], y[i]);
     noClip();
@@ -203,6 +200,7 @@ void keyReleased() {
   }
   if (key == 'r') {
     frameCount = 0;
+    bRebuild = false;
     println("Restarting from beginning....");
   }
   // save for now saves the whole frame only, we might
