@@ -11,6 +11,12 @@ Any photos, except melbourneCity.jpg and nasaImage.jpg which are provided as cou
 
 ## News
 
+### Next idea for recursion
+
+What happens, if the right image source is taken after the rebuild phase has been run for some time and we take
+this new images as a source for our algoritm? Doing a restart automatically with that image and doing it over
+and over again... Curious on that, going ahead...
+
 ### Rebuilding right image
 
 After a certain amount of frames has passed, so that the right image is almost completely black, a "rebuild"
