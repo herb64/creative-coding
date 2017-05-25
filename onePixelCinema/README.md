@@ -34,6 +34,9 @@ bubbles in your image.
 Yu can use the 'p' key to pause the sketch. This is useful to watch your image and to take a screenshot with key 's'.
 You also can pause the execution and change ellipse sizes.
 
+My following picuture havanna2.JPG has been used
+![Havanna source image](data/havanna2.JPG)
+
 The following settings have been used to create the example picture below: 
 ```
 int maxWidth = 1800;
@@ -46,7 +49,7 @@ int minDotSize = 20;
 In addition I did pause the sketch, increased the ellipse size again, did run it a short time, paused again, decreased
 ellipses, run again short time and then pause again and save. This way, large bubbles and small bubbles appear as shown below.
 
-![text description](havanna-test-1.jpg)
+![Running the sketch](havanna-test-1.jpg)
 
 ## TODOs
 
