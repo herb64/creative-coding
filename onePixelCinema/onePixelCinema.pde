@@ -1,3 +1,4 @@
+/* @pjs preload="havanna2.JPG"; */
 /*
  * Creative Coding
  * Week 4, 03 - one pixel cinema
@@ -108,7 +109,7 @@ PImage getImage(String filename) {
     i.resize(imgWidth, imgHeight);
     println("Resizing by factor " + wfactor);
     
-  } else if (hfactor < wfactor) {
+  } else if ((hfactor <= wfactor) && hfactor < 1.0) {
     imgHeight *= hfactor;
     imgWidth *= hfactor;
     i.resize(imgWidth, imgHeight);
