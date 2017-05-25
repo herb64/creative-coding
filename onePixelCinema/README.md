@@ -1,6 +1,7 @@
 # My "One Pixel Camera"
 
-This is the first attempt to modify the code. 
+This is the new version. It loads an image, and adjusts the window size automatically to that image, within given limts, of course,
+and keeping the aspect ratio.
 
 The sketch can also be found at [openprocessing](https://www.openprocessing.org/sketch/430564). This does work now, but see 
 the bugs and fixes section if you are interested in my 'journey' with that. Note, that the left and right sections do overdraw
@@ -9,6 +10,23 @@ in the online version, while in the offline version, the clip() function is used
 Any photos, except melbourneCity.jpg and nasaImage.jpg which are provided as course material, are copyrighted by Herbert Mehlhose.
 
 ## News
+
+### About interaction
+
+You can use the following keys to interact.
+
+| Key | Function | Remark     |
+|------------------------|-------------|-------------|
+| s  | Save image           | Saves to 'onePixelCam*n*.jpg, numbering restarts with new run |
+| p  | Pause execution | Useful to watch result, keep screenshot, change ellipse size |
+| r  | Restart from beginning | Resets the frameCount to 0 (yes, it's possible :) |
+| up  | Increase min. ellipse size | Max value is *maxDotSize* in code |
+| down  | Decrease min. ellipse size | Minimum value is 1 |
+
+Note, that ellipse size is not set statically, the change only affects the *minimum* size, and the actual
+size is dynamically decreased from max to min with increasing frameCount.
+
+### About resizing the frame
 
 This first version jsut implements a way to automatically adjust your window size to the image loaded. I found, that
 the size() function does not allow to use variables. 
@@ -22,6 +40,8 @@ int imgHeight = i.height;
 i.resize(imgWidth, imgHeight);
 surface.setSize(2*imgWidth, imgHeight);
 ```
+
+Note, that this is not possible in the openprocessing Processing.js environment.
 
 ### Random sampling and reconstruction and adding interaction
 
