@@ -11,6 +11,8 @@ Any photos, except melbourneCity.jpg and nasaImage.jpg which are provided as cou
 
 ## News
 
+The newest topics are on top in this section.
+
 ### Next idea for recursion
 
 What happens, if the right image source is taken after the rebuild phase has been run for some time and we take
