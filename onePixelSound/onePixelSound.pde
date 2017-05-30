@@ -65,10 +65,8 @@ void draw() {
     pixelColors[i] = myImg.get(17+i*35, scanLine);
     float hueval = (float)hue(pixelColors[i]);
     float brightval = (float)brightness(pixelColors[i]);
-    float freq = map(hueval,0.0,255.0,80.0,1500.0);
-    float pan = map(brightval,0.0,255.0,-1.0,1.0);
-    sine[i].freq(freq);
-    sine[i].pan(pan);
+    sine[i].freq(map(hueval,0.0,255.0,80.0,1500.0));
+    sine[i].pan(map(brightval,0.0,255.0,-1.0,1.0));
   }
 
   // draw the sampled pixels as verticle bars
@@ -92,6 +90,7 @@ void draw() {
 
   // draw circles over where the "scanner" is currently reading pixel values
   for (int i=0; i<10; i++) {
+    // yellow ones are the active "voices"
     if(amp[i] > 0.0) {
       stroke(255, 255, 0);
     } else {
@@ -117,24 +116,11 @@ void stop() {
  * keyReleased function
  */
 void keyReleased() {
-  int n;
-  /*if ( keyCode == UP) {
-    minDotSize += 5;
-    if (minDotSize >= maxDotSize) {
-      minDotSize = maxDotSize;
-      println("Upper size limit reached... (" + minDotSize + ")");
-    }
-  }*/
-  // we should use keycode, which is the ascii value...
   if (keyCode >= 48 && keyCode <= 57) {
     //            0                9
-    if(keyCode == 48) {
-      n = 9;
-    } else {
-      n = keyCode - 49;
-    }
-    //keyCode == 48 ? n = 9 : n = keyCode - 48;
-    println("changing " + n );
+    // keycode represents the ASCII value...
+    // only 0 to 9 are of interest for our 10 columns / sine waves
+    int n = (keyCode == 48 ? 9 : keyCode - 49);
     amp[n] = 1.0 - amp[n];
     sine[n].amp(amp[n]);
   }
