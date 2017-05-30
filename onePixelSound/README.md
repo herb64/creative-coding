@@ -38,3 +38,8 @@ You can use the following keys to interact.
 | 1-0 | Toggle sound for each channel on/off           | 1 = left column, 0 = right column. Inactive tracks are shown in black circles|
 
 
+## TODO
+
+Well, I'm not yet sure, if everything works fine. There seem to be some problems in the
+sound library. Also need to check for options to save sound files. There are some links
+on the web about "nimim"
