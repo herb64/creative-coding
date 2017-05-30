@@ -1,11 +1,10 @@
 /*
- * Creative Coding
+ * Creative Coding - original Code from Futurelearn Course on "Creative Coding"
  * Week 4, 03 - one pixel cinema
  * by Indae Hwang and Jon McCormack
  * Updated 2016
  * Copyright (c) 2014-2016 Monash University
- * Modifications by Herbert Mehlhose, 2017
- * Include some sound processing to acoustically scan the image
+ * Modifications (c) 2017 by Herbert Mehlhose
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,9 +24,11 @@
  * reading the colour values for 10 equally spaced points, then displaying those colours
  * as vertical bars on the left half of the screen.
  *
- * Code adaption by Herbert Mehlhose: Play 10 sinus tones according to the
- * scanned pixels.
- *
+ * Code adaption by Herbert Mehlhose: Play 10 sinus tones which are
+ * dependent on the color hue value. Each tone corresponds to one
+ * of the sampled colour values, which are updated every second frame.
+ * Tones can be switched on/off by keys '1'..'0', where '0' is the
+ * 10nth column on the right.
  */
 
 // setup the sound library and audio player
@@ -62,15 +63,12 @@ void draw() {
   // read the colours for the current scanLine
   for (int i=0; i<10; i++) {
     pixelColors[i] = myImg.get(17+i*35, scanLine);
-    //if(i == 2) {
-      float hueval = (float)hue(pixelColors[i]);
-      float blueval = (float)blue(pixelColors[i]);
-      float freq = map(hueval,0.0,255.0,80.0,1500.0);
-      float pan = map(blueval,0.0,255.0,-1.0,1.0);
-      //println("Red: " + hueval + ", Freq: " + freq);
-      sine[i].freq(freq);
-      sine[i].pan(pan);
-    //}
+    float hueval = (float)hue(pixelColors[i]);
+    float brightval = (float)brightness(pixelColors[i]);
+    float freq = map(hueval,0.0,255.0,80.0,1500.0);
+    float pan = map(brightval,0.0,255.0,-1.0,1.0);
+    sine[i].freq(freq);
+    sine[i].pan(pan);
   }
 
   // draw the sampled pixels as verticle bars
@@ -95,9 +93,9 @@ void draw() {
   // draw circles over where the "scanner" is currently reading pixel values
   for (int i=0; i<10; i++) {
     if(amp[i] > 0.0) {
-      stroke(0, 255, 0);
+      stroke(255, 255, 0);
     } else {
-      stroke(100, 100, 255);
+      stroke(0, 0, 0);
     }
     noFill();
     ellipse(width/2 + 17 + i*35, scanLine, 5, 5 );
