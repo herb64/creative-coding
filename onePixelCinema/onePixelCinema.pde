@@ -56,14 +56,16 @@
 // adjust these limits for window size, used by automatic scaling to given image
 int maxWidth = 1800;
 int maxHeight = 700;
-String imgfile = "havanna2.JPG";
+String imgfile = "havanna1.JPG";
 int nScansPerFrame = 30;
-int maxDotSize = 80;
+int maxDotSize = 180;
 int minDotSize = 20;
 boolean isSuspended = false;    // key 'p' can be used to pause
 boolean bRebuild = false;       // rebuilding right side
 
 PImage myImg;
+PImage tmpImg;                  // used for copy operations
+PImage origImg;                 // copy this for restart after < or > have been used
 color[] pixelColors;
 int myWidth, myHeight;          // storing width and height after running getImage
 int imageIndex = 1;             // index to save images
@@ -72,8 +74,10 @@ int[] x, y;
 void setup() {
   // get image and adjust window automatically
   myImg = getImage(imgfile);
+  origImg = myImg;
   myWidth = myImg.width;
   myHeight = myImg.height;
+  tmpImg = createImage(myWidth, myHeight, RGB);
   pixelColors = new color[nScansPerFrame];
   x = new int[nScansPerFrame];
   y = new int[nScansPerFrame];
@@ -125,7 +129,8 @@ void draw() {
   if (isSuspended) {
     return;
   }
-  float dotSize = constrain((float)maxDotSize / (1.0 + (float)frameCount/150.0), minDotSize, maxDotSize);
+  float dotSize = constrain((float)maxDotSize / (0.1 + (float)frameCount/150.0), minDotSize, maxDotSize);
+  println("Dotsize " + dotSize);
   //int t = myWidth / nScansPerFrame; // 35
   
   // Read color information from image using a certain amount of 
@@ -144,6 +149,9 @@ void draw() {
     //rect(i*35, 0, 35, 622);
     //rect(i*t, 0, t, myHeight);
     ellipse(x[i], y[i], dotSize, dotSize);
+    // TODO draw points in case of dotsize is 1
+    //stroke(pixelColors[i]);
+    //point(x[i], y[i]);
     noClip();
   }
 
@@ -160,18 +168,13 @@ void draw() {
   // draw circles over where the "scanner" is currently reading pixel values
   for (int i=0; i<nScansPerFrame; i++) {
     clip(myWidth, 0, width, height);
-    //stroke(255, 0, 0);
     noFill();
-    //stroke(pixelColors[i]);
-    //ellipse(width/2 + t/2 + i*t, y[i], 5, 5 );
-    //ellipse(width/2 + x[i], y[i], maxDotSize-dotSize, 2*maxDotSize-dotSize);
     if(bRebuild) {
       stroke(pixelColors[i]);
     } else {
       stroke(0);
     }
     ellipse(width/2 + x[i], y[i], 23, 23);
-    //point(width/2 + x[i], y[i]);
     noClip();
   }
 }
@@ -194,11 +197,40 @@ void keyReleased() {
       println("Lower size limit reached... (1)");
     }
   }
+  
+  if ( keyCode == RIGHT || keyCode == LEFT) {
+    loadPixels(); // get pixels from frame to pixels[] array
+    // for some reason, the documentation at 
+    // https://processing.org/reference/PImage_copy_.html
+    // is not correct. copy returns void, and pimg as 9th parm is not allowed
+    int xOffset = 0;
+    if(keyCode == RIGHT) {xOffset = myWidth;}
+    int nPix = pixels.length;
+    for(int row=0;row<myHeight;row++) {
+      for(int col=0;col<myWidth;col++) {
+        tmpImg.pixels[row*myWidth + col] = pixels[row*width + col + xOffset]; 
+      }
+    }
+    tmpImg.updatePixels();
+    //PImage screenshot = createImage(width, height, RGB);
+    //screenshot.copy(myWidth+1,0,myWidth,myHeight,0,0,myWidth,myHeight);
+    //tmpImg.save("tmpimg.jpg");
+    myImg = tmpImg;
+    frameCount = 0;
+    bRebuild = false;
+    if(keyCode == RIGHT) {
+      println("Restarting with RIGHT image as new base ..." + nPix);
+    } else {
+      println("Restarting with LEFT image as new base ..." + nPix);
+    }
+  }
+  
   if (key == 'p') {
     isSuspended = !isSuspended;
     println("Suspended: " + isSuspended);
   }
   if (key == 'r') {
+    myImg = origImg;
     frameCount = 0;
     bRebuild = false;
     println("Restarting from beginning....");
