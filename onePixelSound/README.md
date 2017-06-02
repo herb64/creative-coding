@@ -15,6 +15,13 @@ Added the following features
 a video, this will produce rubbish, if the new image does not have the same size. In this case, only the
 sound will be correct, but the video is distorted.
 
+Some example videos, that I did capture can be found here:
+
+* [Fairground](https://www.dropbox.com/s/c7lzo2vfdpbh176/processing-movie-ball.mp4?dl=0)
+* [Cheetah](https://www.dropbox.com/s/vp6h4v72w97f554/processing-movie-cheetah.mp4?dl=0)
+* [Eagle](https://www.dropbox.com/s/7430suf7tqq9qnk/processing-movie-eagle.mp4?dl=0)
+* [Hamburg](https://www.dropbox.com/s/n411oe8j4qwfch8/processing-movie-hamburg1.mp4?dl=0)
+* [Pigeon](https://www.dropbox.com/s/2tjmd1ady1uaqcs/processing-movie-pigeon.mp4?dl=0)
 
 ## Basic idea
 I was inspired by the sound functions during the course, and found, that there are also functions,
@@ -55,7 +62,9 @@ Pressing 'r' will move the scanner points to the top again. Pressing 'r' again s
 recording automatically stops, if the scaners reach the bottom of the image.
 
 Note, that you will be prompted for the ffmpeg path the first time, you start the sketch.
+
 ![ffmpeg path prompt](media/ffmpeg-message.PNG)
+
 If this prompt appears, just navigate to the ffmpeg.exe and select this. Afterwards, processing will remember
 the path. In case, this prompt does not appear or you change the location of ffmpeg, you can uncomment the
 following line in the sketch for the next single run to force that dialog to reappear.
@@ -70,14 +79,6 @@ You can select a file using a dialog instead of the need to modify the code each
 
 ## My video capture adventure
 This is not yet completely described here... I will improve the documentation.
-
-Some example videos, that I did capture can be found here:
-
-* [Fairground](https://www.dropbox.com/s/c7lzo2vfdpbh176/processing-movie-ball.mp4?dl=0)
-* [Cheetah](https://www.dropbox.com/s/vp6h4v72w97f554/processing-movie-cheetah.mp4?dl=0)
-* [Eagle](https://www.dropbox.com/s/7430suf7tqq9qnk/processing-movie-eagle.mp4?dl=0)
-* [Hamburg](https://www.dropbox.com/s/n411oe8j4qwfch8/processing-movie-hamburg1.mp4?dl=0)
-* [Pigeon](https://www.dropbox.com/s/2tjmd1ady1uaqcs/processing-movie-pigeon.mp4?dl=0)
 
 First note, that I have done this only on my Windows 10 system. The challenge was to capture a video along with the
 generated sound from the sketch.
